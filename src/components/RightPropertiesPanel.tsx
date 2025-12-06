@@ -1,13 +1,36 @@
-"use client";
+// src/components/RightPropertiesPanel.tsx
+'use client';
 
-const RightPropertiesPanel = () => {
+import React from 'react';
+import { Drawer, Toolbar, Typography, Paper } from '@mui/material';
+
+const drawerWidth = 240;
+
+const RightPropertiesPanel: React.FC = () => {
   return (
-    <aside className="bg-gray-700 text-white w-64 p-4">
-      <h2 className="text-lg font-semibold mb-4">Properties</h2>
-      <div>
-        <p>No object selected</p>
-      </div>
-    </aside>
+    <Drawer
+      variant="permanent"
+      anchor="right"
+      sx={{
+        width: drawerWidth,
+        flexShrink: 0,
+        '& .MuiDrawer-paper': {
+          width: drawerWidth,
+          boxSizing: 'border-box',
+          position: 'relative',
+        },
+      }}
+    >
+      <Toolbar />
+      <Paper elevation={0} sx={{ p: 2 }}>
+        <Typography variant="h6" gutterBottom>
+          Properties
+        </Typography>
+        <Typography variant="body2">
+          No object selected
+        </Typography>
+      </Paper>
+    </Drawer>
   );
 };
 

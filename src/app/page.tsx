@@ -2,6 +2,7 @@
 'use client';
 
 import React from 'react';
+import { Box, Drawer, Toolbar, Typography, Paper } from '@mui/material';
 import Canvas from '../components/Canvas';
 import SymbolLibrary from '../components/SymbolLibrary';
 import Header from '@/components/Header';
@@ -9,25 +10,51 @@ import RightPropertiesPanel from '@/components/RightPropertiesPanel';
 import StatusBar from '@/components/StatusBar';
 import { useStore } from '@/store/useStore';
 
+const drawerWidth = 240;
+
 export default function Home() {
   const { selectedSymbol } = useStore();
 
   return (
-    <div className="flex flex-col h-screen">
+    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
       <Header />
-      <div className="flex flex-1 overflow-hidden">
-        <aside className="bg-gray-700 text-white w-64 p-2 flex flex-col items-center gap-4">
+      <Box sx={{ display: 'flex', flexGrow: 1 }}>
+        <Drawer
+          variant="permanent"
+          sx={{
+            width: drawerWidth,
+            flexShrink: 0,
+            '& .MuiDrawer-paper': {
+              width: drawerWidth,
+              boxSizing: 'border-box',
+              position: 'relative',
+            },
+          }}
+        >
+          <Toolbar />
           <SymbolLibrary />
-          <div className="mt-4 p-4 bg-gray-100 rounded text-black">
-            <p>Selected: {selectedSymbol || 'None'}</p>
-          </div>
-        </aside>
-        <main className="flex-1 bg-gray-200 p-4">
+          <Paper elevation={0} sx={{ mt: 2, p: 2, textAlign: 'center' }}>
+            <Typography variant="body2">
+              Selected: {selectedSymbol || 'None'}
+            </Typography>
+          </Paper>
+        </Drawer>
+        <Box
+          component="main"
+          sx={{
+            flexGrow: 1,
+            p: 3,
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: 'background.default',
+          }}
+        >
           <Canvas />
-        </main>
+        </Box>
         <RightPropertiesPanel />
-      </div>
+      </Box>
       <StatusBar />
-    </div>
+    </Box>
   );
 }

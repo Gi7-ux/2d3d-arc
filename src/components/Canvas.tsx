@@ -4,17 +4,34 @@
 import React, { useEffect, useRef } from 'react';
 import { Canvas as FabricCanvas, Rect, Circle, IEvent } from 'fabric';
 import { useStore } from '@/store/useStore';
+import { Paper } from '@mui/material';
 
 const Canvas: React.FC = () => {
   const canvasEl = useRef<HTMLCanvasElement>(null);
   const fabricRef = useRef<FabricCanvas | null>(null);
-  const { selectedSymbol } = useStore();
+  const { tool } = useStore();
 
-  const selectedSymbolRef = useRef(selectedSymbol);
+  const stateRef = useRef(useStore.getState());
   useEffect(() => {
-    selectedSymbolRef.current = selectedSymbol;
-    console.log('Selected symbol updated to:', selectedSymbol);
-  }, [selectedSymbol]);
+    const unsubscribe = useStore.subscribe(state => (stateRef.current = state));
+    return () => unsubscribe();
+  }, []);
+
+  // Effect to update cursor based on the selected tool
+  useEffect(() => {
+    if (fabricRef.current) {
+      const canvas = fabricRef.current;
+      if (tool === 'symbol') {
+        canvas.defaultCursor = 'copy';
+        canvas.hoverCursor = 'copy';
+      } else {
+        canvas.defaultCursor = 'default';
+        canvas.hoverCursor = 'move';
+      }
+      canvas.requestRenderAll();
+    }
+  }, [tool]);
+
 
   useEffect(() => {
     if (!canvasEl.current) return;
@@ -29,29 +46,19 @@ const Canvas: React.FC = () => {
 
     fabricRef.current = canvas;
 
-    const testRect = new Rect({
-      left: 50,
-      top: 50,
-      fill: 'red',
-      width: 50,
-      height: 50,
-      selectable: true,
-    });
-    canvas.add(testRect);
-    canvas.requestRenderAll();
-
     canvas.on('mouse:down', (options: IEvent) => {
-      const currentSymbol = selectedSymbolRef.current;
+      const { tool, selectedSymbol } = stateRef.current;
 
       console.log('Canvas clicked. Pointer:', options.pointer);
-      console.log('Current Symbol:', currentSymbol);
+      console.log('Current Tool:', tool);
+      console.log('Current Symbol:', selectedSymbol);
 
-      if (!currentSymbol || !options.pointer) return;
+      if (tool !== 'symbol' || !selectedSymbol || !options.pointer) return;
 
       let newShape;
       const { x, y } = options.pointer;
 
-      if (currentSymbol.toLowerCase().includes('table')) {
+      if (selectedSymbol.toLowerCase().includes('table')) {
         newShape = new Rect({
           left: x,
           top: y,
@@ -61,7 +68,7 @@ const Canvas: React.FC = () => {
           originX: 'center',
           originY: 'center',
         });
-      } else if (currentSymbol.toLowerCase().includes('chair')) {
+      } else if (selectedSymbol.toLowerCase().includes('chair')) {
         newShape = new Circle({
           left: x,
           top: y,
@@ -75,7 +82,7 @@ const Canvas: React.FC = () => {
       if (newShape) {
         canvas.add(newShape);
         canvas.requestRenderAll();
-        console.log('Shape added:', currentSymbol);
+        console.log('Shape added:', selectedSymbol);
       }
     });
 
@@ -87,9 +94,14 @@ const Canvas: React.FC = () => {
   }, []);
 
   return (
-    <div className="border-2 border-gray-300 shadow-lg inline-block">
+    <Paper elevation={3} sx={{
+      border: '1px solid #ccc',
+      '& .lower-canvas, & .upper-canvas': {
+        borderRadius: '8px',
+      }
+    }}>
       <canvas ref={canvasEl} />
-    </div>
+    </Paper>
   );
 };
 

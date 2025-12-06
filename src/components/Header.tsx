@@ -1,21 +1,32 @@
-"use client";
+// src/components/Header.tsx
+'use client';
 
-const Header = () => {
+import React from 'react';
+import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import SaveIcon from '@mui/icons-material/Save';
+import GetAppIcon from '@mui/icons-material/GetApp';
+
+const Header: React.FC = () => {
   return (
-    <header className="bg-gray-800 text-white p-4 shadow-md flex justify-between items-center">
-      <h1 className="text-xl font-bold">2D/3D Floor Plan Builder</h1>
-      <div className="flex gap-4">
-        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-          New Project
-        </button>
-        <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-          Save
-        </button>
-        <button className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded">
-          Export
-        </button>
-      </div>
-    </header>
+    <AppBar position="static" elevation={1}>
+      <Toolbar>
+        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+          2D/3D Floor Plan Builder
+        </Typography>
+        <Box sx={{ display: 'flex', gap: 2 }}>
+          <Button variant="contained" color="primary" startIcon={<AddCircleOutlineIcon />}>
+            New Project
+          </Button>
+          <Button variant="contained" color="secondary" startIcon={<SaveIcon />}>
+            Save
+          </Button>
+          <Button variant="outlined" color="inherit" startIcon={<GetAppIcon />}>
+            Export
+          </Button>
+        </Box>
+      </Toolbar>
+    </AppBar>
   );
 };
 

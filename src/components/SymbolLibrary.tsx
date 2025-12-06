@@ -2,42 +2,43 @@
 "use client";
 
 import { useStore } from "@/store/useStore";
-import Image from "next/image";
+import { IconButton, Tooltip, Paper, Typography, Grid } from '@mui/material';
+import ChairIcon from '@mui/icons-material/Chair';
+import TableRestaurantIcon from '@mui/icons-material/TableRestaurant';
 
 const symbols = [
-  { name: "Chair", src: "/symbols/chair.svg" },
-  { name: "Table", src: "/symbols/table.svg" },
+  { name: "Chair", icon: <ChairIcon /> },
+  { name: "Table", icon: <TableRestaurantIcon /> },
 ];
 
 const SymbolLibrary = () => {
   const { selectedSymbol, setSelectedSymbol } = useStore();
 
   return (
-    <div className="p-2">
-      <h3 className="font-bold mb-2 text-center">Symbols</h3>
-      <div className="grid grid-cols-2 gap-2">
+    <Paper elevation={2} sx={{ p: 2 }}>
+      <Typography variant="subtitle1" gutterBottom align="center">
+        Symbols
+      </Typography>
+      <Grid container spacing={1} justifyContent="center">
         {symbols.map((symbol) => (
-          <button
-            key={symbol.name}
-            aria-label={symbol.name}
-            className={`p-2 rounded-lg border-2 ${
-              selectedSymbol === symbol.name
-                ? "border-blue-500 bg-blue-200"
-                : "border-gray-400 bg-gray-200 hover:bg-gray-300"
-            }`}
-            onClick={() => setSelectedSymbol(symbol.name)}
-          >
-            <Image
-              src={symbol.src}
-              alt={symbol.name}
-              width={40}
-              height={40}
-              className="mx-auto"
-            />
-          </button>
+          <Grid key={symbol.name}>
+            <Tooltip title={symbol.name} placement="top">
+              <IconButton
+                color={selectedSymbol === symbol.name ? 'primary' : 'default'}
+                onClick={() => setSelectedSymbol(symbol.name)}
+                sx={{
+                  border: 2,
+                  borderColor: selectedSymbol === symbol.name ? 'primary.main' : 'transparent',
+                  borderRadius: 2,
+                }}
+              >
+                {symbol.icon}
+              </IconButton>
+            </Tooltip>
+          </Grid>
         ))}
-      </div>
-    </div>
+      </Grid>
+    </Paper>
   );
 };
 
